@@ -103,6 +103,36 @@ search:
     attribute: attributes
 
   fields:
+    subs: # languages = "English (US), French (CA), Portuguese (Brazil)" -> "English, French, Portuguese (Brazil)"
+      selector: media_info
+      optional: true
+      filters:
+        - name: re_replace
+          args: ['(?s)(.*)', '{{ if .Config.use_media_info }}$1{{ else }}{{ end }}']
+        - name: re_replace
+          args: ['(?s)^(?![\s\S]*Text\s+(#\d+)?)[\s\S]*$', ''] # if media info does not contain Text information, give up
+        - name: re_replace
+          args: ['(?s)^(?![\s\S]*Language)[\s\S]*$', ''] # if media info does not contain language information, give up
+        - name: re_replace
+          args: ['\r', ''] # removes crappy \r char
+        - name: re_replace
+          args: ['(?s)(.*(?:Text\s+(#\d+)?.*?(?:Language[^\n]+))).*', "$1\n"] # removes everything after the last Text language
+        - name: re_replace
+          args: ['(?s).*?(Text\s+(#\d+)?.*?(?:Language[^\n]+))', "\n$1"] # removes everything before the first Text language
+        - name: re_replace
+          args: ['(?m)^(?!.*\bLanguage\b).*\n', ''] # removes every line that is not a Language line
+        - name: re_replace
+          args: ['(?s)^(?!.*Language\s*:).*|Language\s*:\s*', ''] # removes everything that is not the actual language
+        - name: re_replace
+          args: ['^\s+|\s+$', ''] # trim leading and trailing spaces
+        - name: re_replace
+          args: ['(?i)((:?Portuguese \(Brazil\)|Spanish \(Latino\)|Norwegian Bokmal|\w+)).*', '$1'] # Language Cleanup (only select languages are multiple words)
+        - name: re_replace
+          args: ['[\n]+', ', '] # creates a single line of languages separated by comma
+        - name: re_replace
+          args: ['\b([^,]+)(?:,\s*\1)+', '$1'] # removes duplicated languages
+        - name: re_replace
+          args: ['(?i)(Portugu.s|Brazilian)(?:[^,]+)?', "Portuguese (Brazil)"] # portuguese is Portuguese (Brazil) (for radarr and sonarr)
     category:
       selector: category_id
     title_optional:
@@ -119,11 +149,11 @@ search:
       optional: true
       filters:
         - name: re_replace
-          args: ['(?i)^.*?(?= \/ |$)', ''] # remove everything after the first " / " if it exists to capture built in languages
+          args: ['^.*\/', ''] # remove everything up to and including the last "/" character
         - name: re_replace
           args: ['\s+', ', '] # replace multiple spaces with comma separator for built in languages
     languages:
-      text: '{{ .Result.languages_title }}, {{ .Result.languages_media_info }}'
+      text: '{{ .Result.languages_title }}'
       optional: true
       filters:
         - name: re_replace
