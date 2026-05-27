@@ -1,0 +1,50 @@
+---
+name: Publish v11 Branch
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: publish-v11-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  publish-v11:
+    name: Rebuild orphan v11 branch
+    runs-on: ubuntu-latest
+    if: github.repository != 'Prowlarr/Indexers'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Publish v11 branch
+        env:
+          SOURCE_BRANCH: master
+          TARGET_BRANCH: v11
+          ORIGIN_REMOTE: origin
+          BASE_DEFINITIONS_DIR: definitions/v11
+          CUSTOM_DEFINITIONS_DIR: custom-definitions/v11
+        run: |
+          chmod +x ./scripts/publish-v11-branch.sh
+          ./scripts/publish-v11-branch.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Source branch: master"
+          echo "Published branch: v11 (orphan, flat root layout)"
+          echo "Sources: definitions/v11 + custom-definitions/v11"

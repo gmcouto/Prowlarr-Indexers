@@ -1,0 +1,59 @@
+---
+name: Upstream Sync
+
+on:
+  schedule:
+    # Daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force_sync:
+        description: 'Run sync even if already up to date with upstream'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: upstream-sync-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync-upstream:
+    name: Sync upstream Prowlarr/Indexers master
+    runs-on: ubuntu-latest
+    if: github.repository != 'Prowlarr/Indexers'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync upstream master
+        env:
+          UPSTREAM_REMOTE: upstream
+          UPSTREAM_REPO: https://github.com/Prowlarr/Indexers.git
+          UPSTREAM_BRANCH: master
+          TARGET_BRANCH: master
+          ORIGIN_REMOTE: origin
+          CUSTOM_PATHS: custom-definitions
+          FORCE_SYNC: ${{ github.event.inputs.force_sync || 'false' }}
+        run: |
+          chmod +x ./scripts/sync-upstream.sh
+          ./scripts/sync-upstream.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Upstream: https://github.com/Prowlarr/Indexers/tree/master"
+          echo "Custom definition paths preserved on conflict: custom-definitions/"
