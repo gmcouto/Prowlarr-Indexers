@@ -46,5 +46,5 @@ jobs:
         if: always()
         run: |
           echo "Source branch: master"
-          echo "Published branch: v11 (orphan, flat root layout)"
+          echo "Published branch: v11 (orphan, v11.zip only)"
           echo "Sources: definitions/v11 + custom-definitions/v11"
