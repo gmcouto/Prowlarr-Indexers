@@ -20,4 +20,4 @@ ildragonero.yml
 rutracker-ru.yml
 magnetz.yml
 tvchaosuk.yml
-fearnopeer.yml
+torrentgalaxyclone.yml

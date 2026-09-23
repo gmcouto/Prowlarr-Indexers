@@ -81,6 +81,11 @@ search:
     freetorrent: "{{ if .Config.freeleech }}1{{ else }}{{ end }}"
     searchsubmit: 1
 
+  keywordsfilters:
+    # strip season and/or ep
+    - name: re_replace
+      args: ["(?i)\\b(?:[SE]\\d{1,4}){1,2}\\b\\s?", ""]
+
   rows:
     selector: table#torrent_table > tbody > tr.torrent
 
@@ -132,13 +137,13 @@ search:
         - name: dateparse
           args: "MMM d yyyy, HH:mm zzz"
     size:
-      selector: td:nth-child(5)
-    grabs:
       selector: td:nth-child(6)
-    seeders:
+    grabs:
       selector: td:nth-child(7)
-    leechers:
+    seeders:
       selector: td:nth-child(8)
+    leechers:
+      selector: td:nth-child(9)
     downloadvolumefactor:
       case:
         strong.tl_free: 0
