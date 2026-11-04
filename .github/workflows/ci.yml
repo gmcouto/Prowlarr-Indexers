@@ -23,9 +23,15 @@ concurrency:
 jobs:
   lint:
     name: Lint Yaml
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install yamllint
+        run: python -m pip install yamllint
       - name: yamllint version
         run: |
           yamllint --version
@@ -34,7 +40,7 @@ jobs:
           yamllint definitions --format github
   schema_validate:
     name: Validate Schema
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
     - name: Setup Python

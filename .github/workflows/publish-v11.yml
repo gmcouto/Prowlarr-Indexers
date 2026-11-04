@@ -14,8 +14,8 @@ concurrency:
 jobs:
   publish-v11:
     name: Rebuild orphan v11 branch
-    runs-on: [self-hosted, Linux, X64]
-    if: github.repository != 'Prowlarr/Indexers'
+    runs-on: ubuntu-24.04
+    if: github.repository == 'gmcouto/Prowlarr-Indexers'
     permissions:
       contents: write
 
@@ -25,7 +25,7 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.WORKFLOWS_TOKEN }}
 
       - name: Configure git
         run: |

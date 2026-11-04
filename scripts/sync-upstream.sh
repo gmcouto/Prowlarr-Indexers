@@ -43,7 +43,7 @@ resolve_custom_conflicts() {
 
     while IFS= read -r file; do
         [[ -z "$file" ]] && continue
-        if is_under_custom_paths "$file"; then
+        if is_under_custom_paths "$file" || [[ "$file" == .github/workflows/* ]]; then
             log "Keeping fork version for custom path: $file"
             git checkout --ours -- "$file"
             git add -- "$file"
@@ -79,6 +79,7 @@ if [[ "${FORCE_SYNC:-false}" != "true" ]] && git merge-base --is-ancestor "$UPST
     exit 0
 fi
 
+BASE_SHA="$(git rev-parse HEAD)"
 UPSTREAM_SHA="$(git rev-parse --short "$UPSTREAM_REMOTE/$UPSTREAM_BRANCH")"
 MERGE_MESSAGE="Sync upstream Prowlarr/Indexers ${UPSTREAM_BRANCH} (${UPSTREAM_SHA})"
 
@@ -102,6 +103,22 @@ if [[ "$merge_status" -ne 0 ]]; then
         git merge --abort || true
         die "Merge failed (exit code ${merge_status})"
     fi
+fi
+
+# GITHUB_TOKEN can push repository contents but cannot push changes to workflow files.
+# Keep the fork's current workflow tree and let maintainers update those files explicitly.
+log "Preserving fork workflow definitions from ${BASE_SHA}..."
+while IFS= read -r -d '' file; do
+    [[ -z "$file" ]] && continue
+    if git cat-file -e "${BASE_SHA}:${file}" 2>/dev/null; then
+        git checkout "${BASE_SHA}" -- "$file"
+    else
+        git rm -f --ignore-unmatch -- "$file"
+    fi
+done < <(git diff --name-only -z "${BASE_SHA}" HEAD -- '.github/workflows/')
+git add -A -- .github/workflows/
+if ! git diff --cached --quiet -- .github/workflows/; then
+    git commit -m "Preserve fork workflows while syncing upstream"
 fi
 
 if git diff --quiet "$ORIGIN_REMOTE/$TARGET_BRANCH"..HEAD 2>/dev/null; then
