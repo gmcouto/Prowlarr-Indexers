@@ -46,7 +46,7 @@ concurrency:
 jobs:
   sync-indexers:
     name: Sync Indexers from Jackett
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-24.04
     if: github.repository == 'Prowlarr/Indexers'
     permissions:
       contents: write

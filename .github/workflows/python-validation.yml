@@ -23,7 +23,7 @@ concurrency:
 jobs:
   python_syntax:
     name: Validate Python Script Syntax
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
     - name: Setup Python
