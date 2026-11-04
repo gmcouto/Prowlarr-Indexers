@@ -21,7 +21,7 @@ jobs:
   sync-upstream:
     name: Sync upstream Prowlarr/Indexers master
     runs-on: ubuntu-24.04
-    if: github.repository != 'Prowlarr/Indexers'
+    if: github.repository == 'gmcouto/Prowlarr-Indexers'
     permissions:
       contents: write
 
@@ -31,7 +31,10 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.WORKFLOWS_TOKEN }}
+
+      - name: Install zip utility
+        run: sudo apt-get update && sudo apt-get install -y zip
 
       - name: Configure git
         run: |
