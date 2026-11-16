@@ -21,7 +21,7 @@ jobs:
   sync-upstream:
     name: Sync upstream Prowlarr/Indexers master
     runs-on: ubuntu-24.04
-    if: github.repository == 'gmcouto/Prowlarr-Indexers'
+    if: github.repository == 'gmcouto/Prowlarr-Gaucho-Indexers'
     permissions:
       contents: write
 
@@ -62,8 +62,20 @@ jobs:
           BASE_DEFINITIONS_DIR: definitions/v11
           CUSTOM_DEFINITIONS_DIR: custom-definitions/v11
         run: |
-          chmod +x ./scripts/publish-v11-branch.sh
-          ./scripts/publish-v11-branch.sh
+          chmod +x ./scripts/publish-definitions.sh
+          ./scripts/publish-definitions.sh
+
+      - name: Publish v12 branch
+        env:
+          SOURCE_BRANCH: master
+          TARGET_BRANCH: v12
+          ORIGIN_REMOTE: origin
+          BASE_DEFINITIONS_DIR: definitions/v12
+          CUSTOM_DEFINITIONS_DIR: custom-definitions/v12
+          FALLBACK_DEFINITIONS_DIR: definitions/v11
+        run: |
+          chmod +x ./scripts/publish-definitions.sh
+          ./scripts/publish-definitions.sh
 
       - name: Summary
         if: always()
