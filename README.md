@@ -1,3 +1,23 @@
+# Prowlarr Gaucho Indexers
+
+This is a fork of [Prowlarr/Indexers](https://github.com/Prowlarr/Indexers). It tracks upstream indexer definitions, maintains custom gaucho indexers, and packages zips for both the v11 and v12 Cardigann schemas so [Prowlarr-Gaucho](https://github.com/gmcouto/Prowlarr-Gaucho) can sync them automatically.
+
+## Gaucho indexers
+
+Custom definitions live under `custom-definitions/v11/` and `custom-definitions/v12/`:
+
+| File | Indexer |
+|------|---------|
+| `bjshare_gaucho.yml` | BjShare Gaucho (disable grouping on site for this to work) |
+| `brasiltracker_gaucho.yml` | BrasilTracker Gaucho |
+| `capybarabr_gaucho.yml` | CapybaraBR Gaucho (API) |
+| `locadora_gaucho.yml` | Locadora Gaucho (API) |
+| `samaritano_gaucho.yml` | SAMARITANO Gaucho (API) |
+
+Workflows rebuild orphan `v11` and `v12` branches whenever `master` updates, producing flat `v11.zip` and `v12.zip` archives at the branch root. Prowlarr-Gaucho downloads the zip matching its current definition version (`v12.zip` today).
+
+---
+
 # Indexers
 
 [![Supported Indexers](https://img.shields.io/badge/Supported%20Indexers-View%20all%20currently%20supported%20indexers%20%26%20trackers-important)](https://wiki.servarr.com/en/prowlarr/supported-indexers)
