@@ -693,6 +693,9 @@
                 },
                 "count": {
                     "$ref": "#/definitions/SelectorBlock"
+                },
+                "mergeheader": {
+                    "type": "string"
                 }
             },
             "title": "RowsBlock"
@@ -704,13 +707,16 @@
                 "^_[A-Za-z0-9-_]*$": {
                     "$ref": "#/definitions/SelectorBlock"
                 },
+                "^[a-z][a-z0-9_]*$": {
+                    "$ref": "#/definitions/SelectorBlock"
+                },
                 "^((title|description)\\|(append))?$": {
                     "$ref": "#/definitions/SelectorBlock"
                 },
                 "^((category|categorydesc)\\|(noappend|append))?$": {
                     "$ref": "#/definitions/SelectorBlock"
                 },
-                "^(download|magnet|infohash|details|comments|title|description|category|categorydesc|size|leechers|seeders|date|files|grabs|downloadvolumefactor|uploadvolumefactor|minimumratio|minimumseedtime|imdb|imdbid|tmdbid|rageid|tvdbid|tvmazeid|traktid|doubanid|poster|genre|year|author|booktitle|publisher|album|artist|label|track)(_([A-Za-z0-9_])*)?$": {
+                "^(download|magnet|infohash|details|comments|title|description|category|categorydesc|size|leechers|seeders|date|files|grabs|downloadvolumefactor|uploadvolumefactor|minimumratio|minimumseedtime|imdb|imdbid|tmdbid|rageid|tvdbid|tvmazeid|traktid|doubanid|poster|genre|languages|subs|year|author|booktitle|publisher|album|artist|label|track)(_([A-Za-z0-9_])*)?$": {
                     "$ref": "#/definitions/SelectorBlock"
                 }
             },
